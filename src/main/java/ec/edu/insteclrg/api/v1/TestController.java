@@ -1,4 +1,4 @@
-package ec.edu.insteclrg.controller;
+package ec.edu.insteclrg.api.v1;
 
 import java.util.List;
 
@@ -17,41 +17,40 @@ import ec.edu.insteclrg.domain.Test;
 import ec.edu.insteclrg.service.TestService;
 
 @RestController
-@RequestMapping("/test")
+@RequestMapping("/api/v1.0/test")
 public class TestController {
 
 	@Autowired
-	TestService clienteService;
+	TestService testService;
 
 	@PostMapping(path = "/guardar")
-	public String guardar(@RequestBody Test cliente) {
-		clienteService.guardar(cliente);
+	public String guardar(@RequestBody Test test) {
+		testService.guardar(test);
 		return "Ok";
 	}
 
 	@PutMapping(path = "actualizar")
-	public String actualizar(@RequestBody Test cliente) {
-		clienteService.actualizar(cliente);
+	public String actualizar(@RequestBody Test test) {
+		testService.actualizar(test);
 		return "Ok";
 	}
 
 	@GetMapping(path = "/listar")
 	public @ResponseBody List<Test> listar() {
-		return clienteService.buscarTodo(new Test());
+		return testService.buscarTodo(new Test());
 
 	}
 
 	@GetMapping(path = "/buscar/{nombre}")
 	public @ResponseBody Test buscar(@PathVariable String nombre) {
-		return clienteService.buscarPorNombre(nombre);
-
+		return testService.buscarPorNombre(nombre);
 	}
 
 	@DeleteMapping(path = "/eliminar/{id}")
 	public void eliminar(@PathVariable Integer id) {
 		Test cliente = new Test();
 		cliente.setId(id);
-		clienteService.eliminar(cliente);
+		testService.eliminar(cliente);
 	}
 
 }
