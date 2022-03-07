@@ -36,12 +36,7 @@ public class TestIdService extends GenericCRUDServiceImpl<TestId, TestIdDTO> {
 	@Override
 	public Optional<TestId> buscar(TestIdDTO dtoObject) {
 		Optional<TestId> domain = repository.findById(dtoObject.getId());
-		if (!domain.isEmpty())
-			return domain;
-		else {
-			throw new ApiException(
-					String.format("Registro con ID %s no existe en la base de datos", dtoObject.getId()));
-		}
+		return domain;
 	}
 
 }
