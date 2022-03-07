@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import ec.edu.insteclrg.common.exception.ApiException;
 import ec.edu.insteclrg.domain.TestId;
 import ec.edu.insteclrg.dto.TestIdDTO;
 import ec.edu.insteclrg.persistence.TestIdRepository;
@@ -34,7 +35,13 @@ public class TestIdService extends GenericCRUDServiceImpl<TestId, TestIdDTO> {
 
 	@Override
 	public Optional<TestId> buscar(TestIdDTO dtoObject) {
-		return repository.findById(dtoObject.getId());
+		Optional<TestId> domain = repository.findById(dtoObject.getId());
+		if (!domain.isEmpty())
+			return domain;
+		else {
+			throw new ApiException(
+					String.format("Registro con ID %s no existe en la base de datos", dtoObject.getId()));
+		}
 	}
 
 }
