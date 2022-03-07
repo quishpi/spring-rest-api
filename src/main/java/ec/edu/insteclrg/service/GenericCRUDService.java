@@ -3,15 +3,17 @@ package ec.edu.insteclrg.service;
 import java.util.List;
 import java.util.Optional;
 
-public interface GenericCRUDService<ENTITY, TYPE> {
+public interface GenericCRUDService<DOMAIN, DTO> {
 
-	public ENTITY guardar(ENTITY entity);
+	void guardar(DTO dtoObject);
 
-	public ENTITY actualizar(ENTITY entity);
+	void actualizar(DTO dtoObject);
 
-	public void eliminar(ENTITY entity);
+	List<DTO> buscarTodo(DTO dtoObject);
 
-	public List<ENTITY> buscarTodo(ENTITY entity);
+	DOMAIN mapearDominio(DTO dtoObject);
 
-	public abstract Optional<ENTITY> buscar(ENTITY entity);
+	DTO mapearDTO(DOMAIN domainObject);
+
+	abstract Optional<DOMAIN> buscar(DTO dtoObject);
 }

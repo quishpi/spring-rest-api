@@ -2,6 +2,7 @@ package ec.edu.insteclrg.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
@@ -9,49 +10,49 @@ import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
-import ec.edu.insteclrg.common.AppException;
+import ec.edu.insteclrg.common.exception.ApiException;
 
 @Service
-public abstract class GenericCRUDServiceImpl<ENTITY, TYPE> implements GenericCRUDService<ENTITY, TYPE> {
+public abstract class GenericCRUDServiceImpl<DOMAIN, DTO> implements GenericCRUDService<DOMAIN, DTO> {
 
 	@Autowired
-	private JpaRepository<ENTITY, TYPE> repository;
+	private JpaRepository<DOMAIN, Long> repository;
 
 	@Override
-	public ENTITY guardar(ENTITY entity) {
-		Optional<ENTITY> optional = buscar(entity);
-		if (optional.isPresent()) {
-			throw new AppException(String.format("Datos ya registrados en el sistema", entity));
+	public void guardar(DTO dtoObject) {
+		Optional<DOMAIN> optional = buscar(dtoObject);
+		if (!optional.isPresent()) {
+			DOMAIN domainObject = mapearDominio(dtoObject);
+			repository.save(domainObject);
 		} else {
-			return repository.save(entity);
+			throw new ApiException(String.format("Registro %s ya existe en el sistema", dtoObject));
 		}
 	}
 
 	@Override
-	public ENTITY actualizar(ENTITY entity) {
-		Optional<ENTITY> optional = buscar(entity);
+	public void actualizar(DTO dtoObject) {
+		Optional<DOMAIN> optional = buscar(dtoObject);
 		if (optional.isPresent()) {
-			return repository.save(entity);
+			DOMAIN domainObject = mapearDominio(dtoObject);
+			repository.save(domainObject);
 		} else {
-			throw new AppException(String.format("Registro no existe en la base de datos", entity));
+			throw new ApiException(String.format("Registro %s no existe en la base de datos", dtoObject));
 		}
 	}
 
 	@Override
-	public void eliminar(ENTITY entity) {
-		Optional<ENTITY> optional = buscar(entity);
-		if (optional.isPresent()) {
-			repository.delete(entity);
-		} else {
-			throw new AppException(String.format("El resgistro %s no existe en base de datos", entity));
-		}
+	public List<DTO> buscarTodo(DTO dtoObject) {
+		//List<DOMAIN> lstObjs = repository.findAll();
+		//return lstObjs.stream().map(obj -> mapearDTO(obj)).collect(Collectors.toList());
+		DOMAIN domainObject = mapearDominio(dtoObject);
+        ExampleMatcher matcher = ExampleMatcher.matching().withIgnoreNullValues().withIgnorePaths("id");
+        List<DOMAIN> lstObjs = repository.findAll(Example.of(domainObject, matcher));
+        return lstObjs.stream()
+                .map(obj -> mapearDTO(obj))
+                .collect(Collectors.toList());
 	}
 
 	@Override
-	public List<ENTITY> buscarTodo(ENTITY entity) {
-		ExampleMatcher matcher = ExampleMatcher.matching().withIgnoreNullValues().withIgnorePaths("id");
-		List<ENTITY> lstObjs = repository.findAll(Example.of(entity, matcher));
-		return lstObjs;
-	}
+	public abstract DOMAIN mapearDominio(DTO dtoObject);
 
 }

@@ -5,19 +5,20 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Table;
 
 import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "test")
-public class Test {
+public class TestCode {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id_test", nullable = false, updatable = false)
-	private int id;
+	@Column(nullable = false, updatable = false)
+	private Long id;
+
+	@Column(nullable = false, unique = true)
+	private String code;
 
 	@Column(nullable = false)
 	private String name;
