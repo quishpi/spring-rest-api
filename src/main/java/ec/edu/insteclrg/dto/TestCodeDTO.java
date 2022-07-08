@@ -11,8 +11,8 @@ public class TestCodeDTO implements Serializable {
 
 	private long id;
 
-	private String codigo;
+	private String code;
 
-	private String nombre;
+	private String name;
 
 }

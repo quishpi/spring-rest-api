@@ -2,41 +2,35 @@ package ec.edu.insteclrg.service.crud;
 
 import java.util.Optional;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import ec.edu.insteclrg.common.exception.ApiException;
 import ec.edu.insteclrg.domain.TestId;
 import ec.edu.insteclrg.dto.TestIdDTO;
 import ec.edu.insteclrg.persistence.TestIdRepository;
-import ec.edu.insteclrg.service.GenericCRUDServiceImpl;
+import ec.edu.insteclrg.service.GenericCrudServiceImpl;
 
 @Service
-public class TestIdService extends GenericCRUDServiceImpl<TestId, TestIdDTO> {
+public class TestIdService extends GenericCrudServiceImpl<TestId, TestIdDTO> {
 
 	@Autowired
 	private TestIdRepository repository;
 
+	ModelMapper modelMapper = new ModelMapper();
+
 	@Override
-	public TestId mapearDominio(TestIdDTO dtoObject) {
-		TestId domain = new TestId();
-		domain.setId(dtoObject.getId());
-		domain.setName(dtoObject.getNombre());
-		return domain;
+	public Optional<TestId> find(TestIdDTO dto) {
+		return repository.findById(dto.getId());
 	}
 
 	@Override
-	public TestIdDTO mapearDTO(TestId domainObject) {
-		TestIdDTO dto = new TestIdDTO();
-		dto.setId(domainObject.getId());
-		dto.setNombre(domainObject.getName());
-		return dto;
+	public TestIdDTO mapToDto(TestId domain) {
+		return modelMapper.map(domain, TestIdDTO.class);
 	}
 
 	@Override
-	public Optional<TestId> buscar(TestIdDTO dtoObject) {
-		Optional<TestId> domain = repository.findById(dtoObject.getId());
-		return domain;
+	public TestId mapToDomain(TestIdDTO dto) {
+		return modelMapper.map(dto, TestId.class);
 	}
-
 }
